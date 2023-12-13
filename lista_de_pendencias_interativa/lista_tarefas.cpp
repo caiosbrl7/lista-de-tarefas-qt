@@ -5,11 +5,6 @@ Lista_tarefas::Lista_tarefas()
 
 }
 
-void Lista_tarefas::comprar(int pt)
-{
-    this->pontos -= pt;
-}
-
 int Lista_tarefas::getPontos()
 {
     return this->pontos;
