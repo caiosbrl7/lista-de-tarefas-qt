@@ -1,10 +1,21 @@
 #include "usuario.h"
 
 
-Usuario::Usuario(QString username, QString senha)
+Usuario::Usuario(QString username, QString senha, int pontos)
 {
     this->username = username;
     this->senha = senha;
+    this->pontos = pontos;
+}
+
+int Usuario::getPontos()
+{
+    return pontos;
+}
+
+void Usuario::setPontos(int newPontos)
+{
+    this->pontos = newPontos;
 }
 
 Usuario::Usuario(){

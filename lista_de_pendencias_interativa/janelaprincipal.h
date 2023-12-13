@@ -8,7 +8,6 @@
 #include <QDir>
 #include "usuario.h"
 #include "janelalogin.h"
-#include "lista_tarefas.h"
 
 namespace Ui {
 class JanelaPrincipal;

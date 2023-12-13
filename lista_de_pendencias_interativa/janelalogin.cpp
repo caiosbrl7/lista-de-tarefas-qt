@@ -21,7 +21,7 @@ JanelaLogin::~JanelaLogin()
 void JanelaLogin::on_registrar_clicked()
 {
     // Criando uma pasta para as informações do usuário com seu nome no local desejado -> 'local' (variável global)
-    Usuario user(ui->username->text(), ui->senha->text());
+    Usuario user(ui->username->text(), ui->senha->text(), 0);
     QString nome = user.getUsername();
     QDir pasta(local+nome);
     pasta.mkdir(local+nome);
@@ -70,7 +70,7 @@ void JanelaLogin::on_login_clicked()
 {
     // Variável criada pra auxiliar na pesquisa das credenciais baseada no user inserido no line edit
     // Dependendo do usuário, o programa vai procurar em uma pasta especifica o arquivo que contém as credenciais de login
-    Usuario user(ui->username->text(), ui->senha->text());
+    Usuario user(ui->username->text(), ui->senha->text(), 0);
     QString loc = local + user.getUsername() + "/";
     QString nome = user.getUsername();
 

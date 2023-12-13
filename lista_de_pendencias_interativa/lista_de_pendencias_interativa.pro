@@ -10,7 +10,6 @@ CONFIG += c++17
 
 SOURCES += \
     janelaprincipal.cpp \
-    lista_tarefas.cpp \
     main.cpp \
     janelalogin.cpp \
     usuario.cpp
@@ -19,7 +18,6 @@ SOURCES += \
 HEADERS += \
     janelalogin.h \
     janelaprincipal.h \
-    lista_tarefas.h \
     usuario.h
 
 FORMS += \

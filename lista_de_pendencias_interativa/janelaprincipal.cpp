@@ -1,7 +1,7 @@
 #include "janelaprincipal.h"
 #include "ui_janelaprincipal.h"
 
-Lista_tarefas minha_lista;
+Usuario usuario;
 
 // Construtor da janela principal
 JanelaPrincipal::JanelaPrincipal(QString user, QWidget *parent) :
@@ -10,9 +10,9 @@ JanelaPrincipal::JanelaPrincipal(QString user, QWidget *parent) :
 {
     ui->setupUi(this);
 
-    minha_lista.setNome_usuario(user);
+    usuario.setUsername(user);
 
-    QString local = "C:/Users/Caio/Desktop/sistema-gerenciamento-tarefas/registros/" + minha_lista.getNome_usuario() + "/";
+    QString local = "C:/Users/Caio/Desktop/sistema-gerenciamento-tarefas/registros/" + usuario.getUsername() + "/";
 
 
     // Preenchendo o list widget com as tarefas salvas no arquivo do usuário
@@ -29,7 +29,7 @@ JanelaPrincipal::JanelaPrincipal(QString user, QWidget *parent) :
 
     arquivo.close();
 
-    //Preenchendo os labels que indicam o nome do usuário logado e a quantidade de pontos que ele possui baseado na quantidade de tarefas concluídas
+    // Preenchendo os labels que indicam o nome do usuário logado e a quantidade de pontos que ele possui baseado na quantidade de tarefas concluídas
     int contador = 0;
 
     QFile pontos(local+"pontos.txt");
@@ -43,10 +43,10 @@ JanelaPrincipal::JanelaPrincipal(QString user, QWidget *parent) :
 
     pontos.close();
 
-    minha_lista.setPontos(contador*20);
+    usuario.setPontos(contador*20);
 
     ui->label_username2->setText("Usuário: " + user);
-    ui->label_points2->setText("Pontos: " + QString:: number(minha_lista.getPontos()));
+    ui->label_points2->setText("Pontos: " + QString:: number(usuario.getPontos()));
 
     // Adicionando o ícone de imagem
     ui->lbl_icone->setScaledContents(true);
@@ -54,17 +54,17 @@ JanelaPrincipal::JanelaPrincipal(QString user, QWidget *parent) :
     ui->lbl_icone->setPixmap(pix);
 
     // Determinando o nível do usuário de acordo com a quantidade de pontos
-    if(minha_lista.getPontos() >= 0 and minha_lista.getPontos() <= 60){
+    if(usuario.getPontos() >= 0 and usuario.getPontos() <= 60){
         ui->status->setText("Iniciante");
-    }else if(minha_lista.getPontos() > 60 and minha_lista.getPontos() <= 120){
+    }else if(usuario.getPontos() > 60 and usuario.getPontos() <= 120){
         ui->status->setText("Explorador de Tarefas");
-    }else if(minha_lista.getPontos() > 120 and minha_lista.getPontos() <= 200){
+    }else if(usuario.getPontos() > 120 and usuario.getPontos() <= 200){
         ui->status->setText("Mestre das Listas");
-    }else if(minha_lista.getPontos() > 200 and minha_lista.getPontos() <= 320){
+    }else if(usuario.getPontos() > 200 and usuario.getPontos() <= 320){
         ui->status->setText("Trabalhador Incansável");
-    }else if(minha_lista.getPontos() > 320 and minha_lista.getPontos() <= 480){
+    }else if(usuario.getPontos() > 320 and usuario.getPontos() <= 480){
         ui->status->setText("Rei da Produtividade");
-    }else if(minha_lista.getPontos() > 480){
+    }else if(usuario.getPontos() > 480){
         ui->status->setText("Mago Supremo da Organização");
     }
 
@@ -76,10 +76,11 @@ JanelaPrincipal::~JanelaPrincipal()
     delete ui;
 }
 
+
 // Função implementada para atualizar o label de pontos toda vez que uma tarefa for concluída
 void JanelaPrincipal::atualizar_pontos()
 {
-    QString local = "C:/Users/Caio/Desktop/sistema-gerenciamento-tarefas/registros/" + minha_lista.getNome_usuario() + "/";
+    QString local = "C:/Users/Caio/Desktop/sistema-gerenciamento-tarefas/registros/" + usuario.getUsername() + "/";
 
     int contador = 0;
 
@@ -94,10 +95,10 @@ void JanelaPrincipal::atualizar_pontos()
 
     pontos.close();
 
-    minha_lista.setPontos(contador*20);
+    usuario.setPontos(contador*20);
 
 
-    ui->label_points2->setText("Pontos: " + QString:: number(minha_lista.getPontos()));
+    ui->label_points2->setText("Pontos: " + QString:: number(usuario.getPontos()));
 
 }
 
@@ -120,7 +121,7 @@ void JanelaPrincipal::on_btn_add_clicked()
 
 void JanelaPrincipal::on_btn_concluida_clicked()
 {
-    QString local = "C:/Users/Caio/Desktop/sistema-gerenciamento-tarefas/registros/" + minha_lista.getNome_usuario() + "/";
+    QString local = "C:/Users/Caio/Desktop/sistema-gerenciamento-tarefas/registros/" + usuario.getUsername() + "/";
 
     // Marca a tarefa como concluída mudando a cor da fonte para verde e adiciona mais um registro no arquivo de tarefas concluídas
     if(ui->listWidget->count() > 0){
@@ -163,7 +164,7 @@ void JanelaPrincipal::on_btn_remove_clicked()
 // Salva todas as tarefas no arquivo de tarefas do usuário
 void JanelaPrincipal::on_btn_salvartarefas_clicked()
 {
-    QString local = "C:/Users/Caio/Desktop/sistema-gerenciamento-tarefas/registros/" + minha_lista.getNome_usuario() + "/";
+    QString local = "C:/Users/Caio/Desktop/sistema-gerenciamento-tarefas/registros/" + usuario.getUsername() + "/";
 
     if (QMessageBox::question(this, "Salvar tarefas", "Deseja salvar suas tarefas?", QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes) {
         QFile arquivo(local+"tarefas.txt");
