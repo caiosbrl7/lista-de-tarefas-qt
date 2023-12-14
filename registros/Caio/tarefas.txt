@@ -1,4 +1,0 @@
-Ir ao mercado
-Estudar sobre "maps" em C++
-Terminar a lista de cálculo
-Entregar o relatório do projeto de programação

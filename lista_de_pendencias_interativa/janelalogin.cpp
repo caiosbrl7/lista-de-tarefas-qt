@@ -1,10 +1,9 @@
 #include "janelalogin.h"
 #include "ui_janelalogin.h"
 
-// Váriaveis responsaveis por indicar o local dos arquivos de usuarios e o nome padrão do arquivo de informações pessoais
-
-QString local = "C:/Users/Caio/Desktop/sistema-gerenciamento-tarefas/registros/";
-QString nomearq = "credenciais.csv";
+// Variáveis responsáveis por indicar o caminho dos arquivos de usuários e o nome padrão do arquivo de informações pessoais
+QString caminhoArquivosUsuarios = "C:/Users/Caio/Desktop/sistema-gerenciamento-tarefas/registros/";
+QString nomeArquivoCredenciais = "credenciais.csv";
 
 JanelaLogin::JanelaLogin(QWidget *parent)
     : QMainWindow(parent)
@@ -20,41 +19,54 @@ JanelaLogin::~JanelaLogin()
 
 void JanelaLogin::on_registrar_clicked()
 {
-    // Criando uma pasta para as informações do usuário com seu nome no local desejado -> 'local' (variável global)
-    Usuario user(ui->username->text(), ui->senha->text(), 0);
-    QString nome = user.getUsername();
-    QDir pasta(local+nome);
-    pasta.mkdir(local+nome);
+    // Criando uma pasta para as informações do usuário com seu nome no local desejado -> 'caminhoArquivosUsuarios' (variável global)
+    Usuario usuario(ui->username->text(), ui->senha->text(), 0);
+    QString nomeUsuario = usuario.getUsername();
+
+    QFile arquivoCredenciais(caminhoArquivosUsuarios + nomeArquivoCredenciais);
+    if(arquivoCredenciais.open(QFile::ReadOnly|QFile::Text)){
+        QTextStream entradaDados(&arquivoCredenciais);
+        QString infoUsuario = usuario.getUsername() + "," + usuario.getSenha();
+        const QString conteudoArquivo = entradaDados.readAll();
+        if(conteudoArquivo.contains(infoUsuario)){
+            arquivoCredenciais.close();
+            QMessageBox::warning(this, "Operação Inválida", "Usuário já registrado");
+            ui->username->clear();
+            ui->senha->clear();
+            return;
+        }
+        arquivoCredenciais.close();
+    }
+
+    QDir pastaUsuario(caminhoArquivosUsuarios + nomeUsuario);
+    pastaUsuario.mkdir(caminhoArquivosUsuarios + nomeUsuario);
 
     // QString que representa onde o arquivo de credenciais vai ser criado
-    QString loc = local + user.getUsername() + "/";
-
+    QString caminhoArquivoUsuario = caminhoArquivosUsuarios + usuario.getUsername() + "/";
 
     // Adicionando o arquivo de tarefas para o usuário
-    QFile tarefas(loc+"tarefas.txt");
-    if(tarefas.open(QFile::WriteOnly|QFile::Text)){
-        tarefas.flush();
+    QFile arquivoTarefas(caminhoArquivoUsuario + "tarefas.txt");
+    if(arquivoTarefas.open(QFile::WriteOnly|QFile::Text)){
+        arquivoTarefas.flush();
     }
+    arquivoTarefas.close();
 
-    tarefas.close();
-
-    QFile pontos(loc+"pontos.txt");
-    if(pontos.open(QFile::WriteOnly|QFile::Text)){
-        pontos.flush();
+    QFile arquivoPontos(caminhoArquivoUsuario + "pontos.txt");
+    if(arquivoPontos.open(QFile::WriteOnly|QFile::Text)){
+        arquivoPontos.flush();
     }
-
-    pontos.close();
+    arquivoPontos.close();
 
     // Criando o arquivo e preenchendo com suas informações de login separadas por vírgula (padrão de arquivo .csv)
     // Após ser criado, fecha a aba e entra na janela principal
-    QFile arquivo(loc+nomearq);
+    QFile arquivo(caminhoArquivosUsuarios + nomeArquivoCredenciais);
     if(arquivo.open(QFile::WriteOnly|QFile::Text|QFile::Append)){
         QTextStream saida(&arquivo);
-        saida << user.getUsername() << "," << user.getSenha() << '\n';
+        saida << usuario.getUsername() << "," << usuario.getSenha() << '\n';
         arquivo.flush();
-        QMessageBox::information(this, "Seja bem vindo", "Usuario cadastrado com sucesso");
-        this->hide();
-        JanelaPrincipal *janela = new JanelaPrincipal(nome);
+        QMessageBox::information(this, "Seja bem vindo", "Usuário cadastrado com sucesso");
+        this->close();
+        JanelaPrincipal *janela = new JanelaPrincipal(nomeUsuario);
         janela->show();
     }else{
         QMessageBox::warning(this,"Erro", "Erro ao abrir ou encontrar o arquivo");
@@ -65,37 +77,32 @@ void JanelaLogin::on_registrar_clicked()
     ui->senha->clear();
 }
 
-
 void JanelaLogin::on_login_clicked()
 {
-    // Variável criada pra auxiliar na pesquisa das credenciais baseada no user inserido no line edit
-    // Dependendo do usuário, o programa vai procurar em uma pasta especifica o arquivo que contém as credenciais de login
-    Usuario user(ui->username->text(), ui->senha->text(), 0);
-    QString loc = local + user.getUsername() + "/";
-    QString nome = user.getUsername();
+    // Variável criada para auxiliar na pesquisa das credenciais baseada no usuário inserido no line edit
+    // Dependendo do usuário, o programa vai procurar em uma pasta específica o arquivo que contém as credenciais de login
+    Usuario usuario(ui->username->text(), ui->senha->text(), 0);
+    QString nomeUsuario = usuario.getUsername();
 
-    // Pesquisa pelo arquivo de credenciais e usa o método .contains da biblioteca QString para verificar se o arquivo contem o conteudo
+    // Pesquisa pelo arquivo de credenciais e usa o método .contains da biblioteca QString para verificar se o arquivo contém o conteúdo
     // indicado (login e senha), se sim, retorna true
-    QFile arquivo(loc+nomearq);
+    QFile arquivo(caminhoArquivosUsuarios + nomeArquivoCredenciais);
     if(arquivo.open(QFile::ReadOnly|QFile::Text)){
         QTextStream entrada(&arquivo);
-        QString info = user.getUsername() + "," + user.getSenha();
+        QString info = usuario.getUsername() + "," + usuario.getSenha();
         const QString conteudo = entrada.readAll();
         if(conteudo.contains(info)){
             QMessageBox::information(this, "Seja bem vindo", "Login realizado com sucesso");
             this->hide();
-            JanelaPrincipal *janela = new JanelaPrincipal(nome);
+            JanelaPrincipal *janela = new JanelaPrincipal(nomeUsuario);
             janela->show();
         }else{
-            QMessageBox::warning(this,"Erro", "Usuario nao cadastrado");
+            QMessageBox::warning(this,"Erro", "Usuário não cadastrado");
         }
     }else{
-      QMessageBox::warning(this,"Erro", "Usuario nao cadastrado");
+        QMessageBox::warning(this,"Erro", "Usuário não cadastrado");
     }
     arquivo.close();
     ui->username->clear();
     ui->senha->clear();
 }
-
-
-

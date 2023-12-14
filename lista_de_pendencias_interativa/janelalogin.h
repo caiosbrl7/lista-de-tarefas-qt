@@ -7,7 +7,6 @@
 #include <QTextStream>
 #include <QDir>
 #include "usuario.h"
-#include "lista_tarefas.h"
 #include "janelaprincipal.h"
 
 
